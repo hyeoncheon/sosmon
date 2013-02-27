@@ -40,7 +40,8 @@ class TestsController < ApplicationController
   # POST /tests
   # POST /tests.json
   def create
-    @test = Test.new(params[:test])
+    service = Service.find(params[:service])
+    @test = service.tests.new(params[:test])
 
     respond_to do |format|
       if @test.save

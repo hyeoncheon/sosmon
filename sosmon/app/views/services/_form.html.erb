@@ -12,26 +12,29 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <span class="label"><%= f.label :name %></span>
+    <span class="input"><%= f.text_field :name %></span>
   </div>
   <div class="field">
-    <%= f.label :portfolio %><br />
-    <%= f.text_field :portfolio %>
+    <span class="label"><%= f.label :portfolio %></span>
+    <span class="input"><%= f.text_field :portfolio %></span>
   </div>
   <div class="field">
-    <%= f.label :tags %><br />
-    <%= f.text_field :tags %>
+    <span class="label"><%= f.label :tags %></span>
+    <span class="input"><%= f.text_field :tags %></span>
   </div>
   <div class="field">
-    <%= f.label :client %><br />
-    <%= f.text_field :client %>
+    <span class="label"><%= f.label :client %></span>
+    <span class="select"><%=
+    select_tag(:client, options_from_collection_for_select(Client.all,
+                                                           :id,
+                                                           :name)) %></span>
   </div>
   <div class="field">
-    <%= f.label :desc %><br />
-    <%= f.text_area :desc %>
+    <span class="label"><%= f.label :desc %></span>
+    <span class="input"><%= f.text_area :desc %></span>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <span class="button"><%= f.submit %></span>
   </div>
 <% end %>

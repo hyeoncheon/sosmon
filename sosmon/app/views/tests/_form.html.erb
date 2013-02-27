@@ -12,38 +12,42 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <span class="label"><%= f.label :name %></span>
+    <span class="input"><%= f.text_field :name %></span>
   </div>
   <div class="field">
-    <%= f.label :service %><br />
-    <%= f.text_field :service %>
+    <span class="label"><%= f.label :service %></span>
+    <span class="select"><%=
+    select_tag(:service, options_from_collection_for_select(Service.all,
+                                                            :id,
+                                                            :name)) %></span></span>
+
   </div>
   <div class="field">
-    <%= f.label :check_url %><br />
-    <%= f.text_field :check_url %>
+    <span class="label"><%= f.label :check_url %></span>
+    <span class="input"><%= f.text_field :check_url %></span>
   </div>
   <div class="field">
-    <%= f.label :uuid %><br />
-    <%= f.text_field :uuid %>
+    <span class="label"><%= f.label :uuid %></span>
+    <span class="input"><%= f.text_field :uuid %></span>
   </div>
   <div class="field">
-    <%= f.label :enabled %><br />
-    <%= f.check_box :enabled %>
+    <span class="label"><%= f.label :enabled %></span>
+    <span class="input"><%= f.check_box :enabled %></span>
   </div>
   <div class="field">
-    <%= f.label :tags %><br />
-    <%= f.text_field :tags %>
+    <span class="label"><%= f.label :tags %></span>
+    <span class="input"><%= f.text_field :tags %></span>
   </div>
   <div class="field">
-    <%= f.label :opmode %><br />
-    <%= f.text_field :opmode %>
+    <span class="label"><%= f.label :opmode %></span>
+    <span class="input"><%= f.text_field :opmode %></span>
   </div>
   <div class="field">
-    <%= f.label :status %><br />
-    <%= f.text_field :status %>
+    <span class="label"><%= f.label :status %></span>
+      <span class="input"><%= f.text_field :status %></span>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <span class="button"><%= f.submit %></span>
   </div>
 <% end %>
