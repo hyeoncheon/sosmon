@@ -15,15 +15,66 @@ response.setHeader("Pragma", "no-cache");
 response.setDateHeader("Expires", 0);
 %><%!
 
+public Properties get_properties() {
+	ClassLoader cl = Thread.currentThread().getContextClassLoader();
+	Properties props = new Properties();
+
+	if (cl == null) {
+		cl = ClassLoader.getSystemClassLoader();
+	}
+
+	System.out.println("HC-SOSm initiate its properties...");
+	try {
+		props.load(getClass().getResourceAsStream("/hcu.properties"));
+	} catch (Exception e) {
+	}
+	return props;
+}
+
+public String serviceInfo() {
+	Properties props = get_properties();
+	StringBuffer ret = new StringBuffer();
+	String value;
+
+	ret.append("<honcheonui>");
+	if ((value = System.getProperty("hcu.servicegroup")) == null) {
+		value = (String) props.get("hcu.servicegroup" + "");
+	}
+	ret.append("<servicegroup>" + value + "</servicegroup>");
+	if ((value = System.getProperty("hcu.name")) == null) {
+		value = (String) props.get("hcu.name" + "");
+	}
+	ret.append("<name>" + value + "</name>");
+	if ((value = System.getProperty("hcu.role")) == null) {
+		value = (String) props.get("hcu.role" + "");
+	}
+	ret.append("<role>" + value + "</role>");
+	if ((value = System.getProperty("hcu.port")) == null) {
+		value = (String) props.get("hcu.port" + "");
+	}
+	ret.append("<port>" + value + "</port>");
+	if ((value = System.getProperty("hcu.opmode")) == null) {
+		value = (String) props.get("hcu.opmode" + "");
+	}
+	ret.append("<opmode>" + value + "</opmode>");
+	if ((value = System.getProperty("hcu.portfolio")) == null) {
+		value = (String) props.get("hcu.portfolio" + "");
+	}
+	ret.append("<portfolio>" + value + "</portfolio>");
+	ret.append("</honcheonui>");
+
+	return ret.toString();
+}
+
 public String threadInfo() {
 	Map<Thread.State, AtomicInteger> sM
 		= new LinkedHashMap<Thread.State, AtomicInteger>();
-	sM.put(Thread.State.NEW,           new AtomicInteger(0));
-	sM.put(Thread.State.BLOCKED,       new AtomicInteger(0));
-	sM.put(Thread.State.RUNNABLE,      new AtomicInteger(0));
+	sM.put(Thread.State.NEW,	   new AtomicInteger(0));
+	sM.put(Thread.State.BLOCKED,	   new AtomicInteger(0));
+	sM.put(Thread.State.RUNNABLE,	   new AtomicInteger(0));
 	sM.put(Thread.State.TIMED_WAITING, new AtomicInteger(0));
-	sM.put(Thread.State.WAITING,       new AtomicInteger(0));
-	sM.put(Thread.State.TERMINATED,    new AtomicInteger(0));
+	sM.put(Thread.State.WAITING,	   new AtomicInteger(0));
+	sM.put(Thread.State.TERMINATED,	   new AtomicInteger(0));
 
 	Map<Thread, StackTraceElement[]> dump = Thread.getAllStackTraces();
 	for (Map.Entry<Thread, StackTraceElement[]> entry : dump.entrySet()) {
@@ -111,6 +162,14 @@ public String getDSInfoXml(String path, NameClassPair nc, Context ctx) {
 	try {
 		DataSource ds = (DataSource) ctx.lookup(path);
 		conn = ds.getConnection();
+		DatabaseMetaData dm = conn.getMetaData();
+		dbms_name = dm.getDatabaseProductName();
+
+		if (dbms_name == "HSQL Database Engine") {
+			conn.close();
+			return getSimpleInfoXml(path, nc);
+		}
+
 		txt.append("\t\t<datasource path=\"" + path
 				+ "\" class=\"" + nc.getClassName()
 				+ "\" alive=\"Y\">");
@@ -129,8 +188,6 @@ public String getDSInfoXml(String path, NameClassPair nc, Context ctx) {
 		txt.append("<url>" + bds.getNumIdle() + "</url>");
 		*/
 
-		DatabaseMetaData dm = conn.getMetaData();
-		dbms_name = dm.getDatabaseProductName();
 		txt.append("\t\t\t<product>" + dbms_name + "</product>");
 		String tmp = dm.getDatabaseProductVersion();
 		txt.append("\t\t\t<version>" + tmp + "</version>");
@@ -161,28 +218,32 @@ public String getDSInfoXml(String path, NameClassPair nc, Context ctx) {
 					+ "'%Y-%m-%d %H:%i:%s')";
 			query_version = "SELECT version()";
 			query_database = "SELECT database()";
-		} else {
-			throw new RuntimeException("Not supported DBMS: "
-					+ dbms_name);
+		} else if (dbms_name == "Microsoft SQL Server") {
+			query_date = "SELECT Convert(varchar(30),"
+					+ " Getdate(),120)";
+			query_version = "SELECT @@VERSION VersionInfo";
+			query_database = "SELECT DB_NAME()";
 		}
 
-		rs = stmt.executeQuery(query_date);
-		rs.next();
-		ret = rs.getString(1);
-		rs.close();
-		txt.append("\t\t<date>" + ret + "</date>");
+		if (query_date != null) {
+			rs = stmt.executeQuery(query_date);
+			rs.next();
+			ret = rs.getString(1);
+			rs.close();
+			txt.append("\t\t<date>" + ret + "</date>");
 
-		rs = stmt.executeQuery(query_version);
-		rs.next();
-		ret = rs.getString(1);
-		rs.close();
-		txt.append("\t\t<engine>" + ret + "</engine>");
+			rs = stmt.executeQuery(query_version);
+			rs.next();
+			ret = rs.getString(1);
+			rs.close();
+			txt.append("\t\t<engine>" + ret + "</engine>");
 
-		rs = stmt.executeQuery(query_database);
-		rs.next();
-		ret = rs.getString(1);
-		rs.close();
-		txt.append("\t\t<database>" + ret + "</database>");
+			rs = stmt.executeQuery(query_database);
+			rs.next();
+			ret = rs.getString(1);
+			rs.close();
+			txt.append("\t\t<database>" + ret + "</database>");
+		}
 		stmt.close();
 		conn.close();
 	} catch (Exception e) {
@@ -195,14 +256,7 @@ public String getDSInfoXml(String path, NameClassPair nc, Context ctx) {
 
 %><?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <service-status version="0.1.0" description="service status message">
-	<honcheonui>
-		<servicegroup><%= System.getProperty("hcu.servicegroup") %></servicegroup>
-		<servicegroup><%= System.getProperty("hcu.name") %></servicegroup>
-		<role><%= System.getProperty("hcu.role") %></role>
-		<port><%= System.getProperty("hcu.port") %></port>
-		<opmode><%= System.getProperty("hcu.opmode") %></opmode>
-		<portfolio><%= System.getProperty("hcu.portfolio") %></portfolio>
-	</honcheonui>
+	<%= serviceInfo() %>
 	<was-status>
 		<alive code="1">alive!</alive>
 		<date><%
