@@ -1,10 +1,10 @@
 class CreateServices < ActiveRecord::Migration
   def change
     create_table :services do |t|
-      t.string :name
+      t.string :name, :null => false
       t.string :portfolio
       t.string :tags
-      t.references :client
+      t.references :client, :null => false
       t.text :desc
 
       t.timestamps
