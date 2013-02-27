@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  service: 
+  check_url: MyString
+  uuid: MyString
+  enabled: false
+  tags: MyString
+  opmode: MyString
+  status: MyString
+
+two:
+  name: MyString
+  service: 
+  check_url: MyString
+  uuid: MyString
+  enabled: false
+  tags: MyString
+  opmode: MyString
+  status: MyString

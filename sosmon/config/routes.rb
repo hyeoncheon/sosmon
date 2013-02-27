@@ -1,4 +1,5 @@
 Sosmon::Application.routes.draw do
+  resources :tests
   resources :services
   resources :clients
 

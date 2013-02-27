@@ -1,0 +1,45 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @test.name %>
+</p>
+
+<p>
+  <b>Service:</b>
+  <%= @test.service %>
+</p>
+
+<p>
+  <b>Check url:</b>
+  <%= @test.check_url %>
+</p>
+
+<p>
+  <b>Uuid:</b>
+  <%= @test.uuid %>
+</p>
+
+<p>
+  <b>Enabled:</b>
+  <%= @test.enabled %>
+</p>
+
+<p>
+  <b>Tags:</b>
+  <%= @test.tags %>
+</p>
+
+<p>
+  <b>Opmode:</b>
+  <%= @test.opmode %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @test.status %>
+</p>
+
+
+<%= link_to 'Edit', edit_test_path(@test) %> |
+<%= link_to 'Back', tests_path %>
