@@ -1,4 +1,5 @@
 Sosmon::Application.routes.draw do
+  resources :services
   resources :clients
 
   # The priority is based upon order of creation:
