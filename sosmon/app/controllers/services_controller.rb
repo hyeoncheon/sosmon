@@ -2,7 +2,11 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.json
   def index
-    @services = Service.all
+    unless params[:client].blank?
+      @services = Client.find(params[:client]).services
+    else
+      @services = Service.all
+    end
 
     respond_to do |format|
       format.html # index.html.erb

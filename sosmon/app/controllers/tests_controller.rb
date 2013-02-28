@@ -2,7 +2,11 @@ class TestsController < ApplicationController
   # GET /tests
   # GET /tests.json
   def index
-    @tests = Test.all
+    unless params[:service].blank?
+      @tests = Service.find(params[:service]).tests
+    else
+      @tests = Test.all
+    end
 
     respond_to do |format|
       format.html # index.html.erb
